@@ -1,0 +1,28 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "David Yang",
+    "longName": "Multicolo Sliding",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "fonts/Lato-Bold.ttf",
+                "name": "FONT_LATO_BOLD_46",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Multicolor Sliding",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "755f37bc-cbd7-4df3-ae56-e0d7dbe30915",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
