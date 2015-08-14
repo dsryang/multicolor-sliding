@@ -174,17 +174,19 @@ static void draw_dark_layer(Layer *layer, GContext *ctx) {
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 }
 
-static void animations() {
+static void animations(int16_t window_width, int16_t window_height) {
   // Slide from left animation for light background layer
-  GRect light_start = GRect(-144, 0, 0, 168);
-  GRect light_end = GRect(0, 0, 144, 168);
+  GRect light_start = GRect(-window_width, 0, 0, window_height);
+  GRect light_end = GRect(0, 0, window_width, window_height);
   property_animation_light = property_animation_create_layer_frame(light_layer, &light_start, &light_end);
   animation_light = property_animation_get_animation(property_animation_light);
   animation_set_duration(animation_light, 800);
   
   // Slide from right animation for dark background layer
-  GRect dark_start = GRect(144, 43, 144, 82);
-  GRect dark_end = GRect(0, 43, 144, 82);
+  int16_t dark_height = 82;
+  int16_t dark_y = (window_height / 2) - (dark_height / 2);
+  GRect dark_start = GRect(window_width, dark_y, window_width, dark_height);
+  GRect dark_end = GRect(0, dark_y, window_width, dark_height);
   property_animation_dark = property_animation_create_layer_frame(dark_layer, &dark_start, &dark_end);
   animation_dark = property_animation_get_animation(property_animation_dark);
   animation_set_duration(animation_dark, 800);
@@ -198,7 +200,17 @@ static void animations() {
 static void main_window_load(Window *window) {
   // Get the root layer
   Layer *window_layer = window_get_root_layer(window);
-  
+  GRect bounds = layer_get_bounds(window_layer);
+  int16_t window_width = bounds.size.w;
+  int16_t window_height = bounds.size.h;
+  int16_t text_offset = 7;
+  int16_t dark_height = 82;
+  int16_t time_text_height = 46;
+  int16_t date_text_height = 24;
+  int16_t time_text_y = (window_height / 2) - (dark_height / 2) +
+                        ((dark_height - time_text_height - date_text_height) / 2) - text_offset;
+  int16_t date_text_y = time_text_y + time_text_height;
+
   // Create light layer
   light_layer = layer_create(GRectZero);
   layer_set_update_proc(light_layer, draw_light_layer);
@@ -210,7 +222,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, dark_layer);
   
   // Create time TextLayer
-  time_layer = text_layer_create(GRect(0, 42, 144, 70));
+  time_layer = text_layer_create(GRect(0, time_text_y, window_width, time_text_height));
   text_layer_set_background_color(time_layer, GColorClear);
   text_layer_set_text_color(time_layer, GColorWhite);
 
@@ -221,7 +233,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
   
   // Create date TextLayer
-  date_layer = text_layer_create(GRect(0, 88, 144, 80));
+  date_layer = text_layer_create(GRect(0, date_text_y, window_width, date_text_height));
   text_layer_set_background_color(date_layer, GColorClear);
   text_layer_set_text_color(date_layer, GColorWhite);
 
@@ -229,6 +241,9 @@ static void main_window_load(Window *window) {
   text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
+
+  // Play animations
+  animations(window_width, window_height);
 }
 
 static void main_window_unload(Window *window) {
@@ -281,9 +296,6 @@ static void init() {
   else {
     update_color();
   }
-  
-  // Play animations
-  animations();
   
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
