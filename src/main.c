@@ -206,7 +206,7 @@ static void main_window_load(Window *window) {
   int16_t text_offset = 7;
   int16_t dark_height = 82;
   int16_t time_text_height = 46;
-  int16_t date_text_height = 24;
+  int16_t date_text_height = 26;
   int16_t time_text_y = (window_height / 2) - (dark_height / 2) +
                         ((dark_height - time_text_height - date_text_height) / 2) - text_offset;
   int16_t date_text_y = time_text_y + time_text_height;
